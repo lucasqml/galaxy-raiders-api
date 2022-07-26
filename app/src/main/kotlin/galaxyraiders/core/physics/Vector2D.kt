@@ -1,7 +1,9 @@
 package galaxyraiders.core.physics
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import kotlin.math.*
+import kotlin.math.sign
+
+const val RADIANT_TO_DEGREE = (180 / Math.PI)
 
 @JsonIgnoreProperties("unit", "normal", "degree", "magnitude")
 data class Vector2D(val dx: Double, val dy: Double) {
@@ -14,8 +16,8 @@ data class Vector2D(val dx: Double, val dy: Double) {
 
   val radiant: Double
     get() {
-      val tg : Double = this.dy/this.dx 
-      val aTg = Math.atan(tg)
+      val tg: Double = this.dy / this.dx
+      val aTg: Double = Math.atan(tg)
       // não necessita de correção do ângulo
       if (this.dx >= 0) return aTg
       // precisa somar/subtrair PI
@@ -23,7 +25,7 @@ data class Vector2D(val dx: Double, val dy: Double) {
     }
 
   val degree: Double
-    get() = this.radiant * (180/ Math.PI)
+    get() = this.radiant * RADIANT_TO_DEGREE
 
   val unit: Vector2D
     get() = Vector2D(this.dx / this.magnitude, this.dy / this.magnitude)
