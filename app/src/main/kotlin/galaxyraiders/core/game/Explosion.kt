@@ -7,5 +7,4 @@ class Explosion(
   explosionPoint: Point2D,
   explosionRadius: Double
 ) :
-  SpaceObject("Explosion", '*', explosionPoint, Vector2D(0.0, 0.0), explosionRadius, 0.0) {
-}
+  SpaceObject("Explosion", '*', explosionPoint, Vector2D(0.0, 0.0), explosionRadius, 0.0)
