@@ -23,9 +23,9 @@ object SpaceFieldConfig {
   val asteroidMinMass = config.get<Int>("ASTEROID_MIN_MASS")
   val asteroidMaxMass = config.get<Int>("ASTEROID_MAX_MASS")
   val asteroidMassMultiplier = config.get<Double>("ASTEROID_MASS_MULTIPLIER")
-
 }
 const val EXPLOSION_RADIUS = 5.0
+const val EXPLOSION_TICKSPAN = 12
 
 @Suppress("TooManyFunctions")
 data class SpaceField(val width: Int, val height: Int, val generator: RandomGenerator) {
@@ -66,41 +66,52 @@ data class SpaceField(val width: Int, val height: Int, val generator: RandomGene
     this.asteroids += this.createAsteroidWithRandomProperties()
   }
 
-  fun generateExplosion (posicao: Point2D){
+  fun generateExplosion(posicao: Point2D) {
     this.explosions += createExplosion(posicao)
   }
 
-  fun clearObject (spaceObject: SpaceObject){
-    if (spaceObject is Asteroid){
+  fun clearObject(spaceObject: SpaceObject) {
+    if (spaceObject is Asteroid) {
       this.asteroids.remove(spaceObject)
     }
-    if (spaceObject is Missile){
+    if (spaceObject is Missile) {
       this.missiles.remove(spaceObject)
     }
-    if (spaceObject is Explosion){
-      this.explosions.remove(spaceObject) 
+    if (spaceObject is Explosion) {
+      this.explosions.remove(spaceObject)
     }
   }
 
-  fun removeExplosions() {
-    this.explosions = emptyList()
+  fun clearOldExplosions() {
+    this.explosions.forEach {
+      it.decreaseTicks()
+      if (it.ticksLeft <= 0){
+        this.explosions.remove(it)
+      }
+    }
   }
 
   fun trimMissiles() {
-    this.missiles = this.missiles.filter {
-      it.inBoundaries(this.boundaryX, this.boundaryY)
+    this.missiles.forEach {
+      if (it.inBoundaries(this.boundaryX, this.boundaryY)){
+        this.missiles.remove(it)
+      }
     }
   }
 
   fun trimAsteroids() {
-    this.asteroids = this.asteroids.filter {
-      it.inBoundaries(this.boundaryX, this.boundaryY)
+    this.asteroids.forEach {
+      if (it.inBoundaries(this.boundaryX, this.boundaryY)){
+        this.asteroids.remove(it)
+      }
     }
   }
 
   fun trimExplosions() {
-    this.explosions = this.explosions.filter {
-      it.inBoundaries(this.boundaryX, this.boundaryY)
+    this.explosions.forEach {
+      if (it.inBoundaries(this.boundaryX, this.boundaryY)){
+        this.explosions.remove(it)
+      }
     }
   }
 
@@ -134,6 +145,7 @@ data class SpaceField(val width: Int, val height: Int, val generator: RandomGene
     return Explosion(
       explosionPoint = position,
       explosionRadius = EXPLOSION_RADIUS,
+      ticksLeft = EXPLOSION_TICKSPAN
     )
   }
   private fun defineMissilePosition(missileRadius: Double): Point2D {

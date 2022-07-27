@@ -82,16 +82,17 @@ class GameEngine(
     this.handleCollisions()
     this.moveSpaceObjects()
     this.trimSpaceObjects()
+    this.clearOldObjects()
     this.generateAsteroids()
-    this.field.removeExplosions()
   }
-
+  @Suppress("MaxLineLength")
   fun handleCollisions() {
     this.field.spaceObjects.forEachPair {
         (first, second) ->
       if (first.impacts(second)) {
         first.collideWith(second, GameEngineConfig.coefficientRestitution)
-        if (first is Missile && second is Asteroid || second is Missile && first is Asteroid) {
+        val anyIsMissile = (first is Missile || second is Missile); val anyIsAsteroid = (first is Asteroid || second is Asteroid)
+        if (anyIsAsteroid && anyIsMissile) {
           val explosionCenter = Point2D(first.center.x, first.center.y)
           this.field.generateExplosion(explosionCenter)
           this.field.clearObject(first)
@@ -100,7 +101,6 @@ class GameEngine(
       }
     }
   }
-
 
   fun moveSpaceObjects() {
     this.field.moveShip()
@@ -112,6 +112,10 @@ class GameEngine(
     this.field.trimAsteroids()
     this.field.trimMissiles()
     this.field.trimExplosions()
+  }
+
+  fun clearOldObjects() {
+    this.field.clearOldExplosions()
   }
 
   fun generateAsteroids() {
