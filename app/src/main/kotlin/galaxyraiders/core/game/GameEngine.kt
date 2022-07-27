@@ -94,6 +94,8 @@ class GameEngine(
         if (first is Missile && second is Asteroid || second is Missile && first is Asteroid) {
           val explosionCenter = Point2D(first.center.x, first.center.y)
           this.field.generateExplosion(explosionCenter)
+          this.field.clearObject(first)
+          this.field.clearObject(second)
         }
       }
     }
@@ -109,6 +111,7 @@ class GameEngine(
   fun trimSpaceObjects() {
     this.field.trimAsteroids()
     this.field.trimMissiles()
+    this.field.trimExplosions()
   }
 
   fun generateAsteroids() {

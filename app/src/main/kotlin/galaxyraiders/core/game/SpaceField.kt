@@ -34,13 +34,13 @@ data class SpaceField(val width: Int, val height: Int, val generator: RandomGene
 
   val ship = initializeShip()
 
-  var missiles: List<Missile> = emptyList()
+  var missiles: MutableList<Missile> = ArrayList()
     private set
 
-  var asteroids: List<Asteroid> = emptyList()
+  var asteroids: MutableList<Asteroid> = ArrayList()
     private set
 
-  var explosions: List<Explosion> = emptyList()
+  var explosions: MutableList<Explosion> = ArrayList()
     private set
 
   val spaceObjects: List<SpaceObject>
@@ -70,6 +70,18 @@ data class SpaceField(val width: Int, val height: Int, val generator: RandomGene
     this.explosions += createExplosion(posicao)
   }
 
+  fun clearObject (spaceObject: SpaceObject){
+    if (spaceObject is Asteroid){
+      this.asteroids.remove(spaceObject)
+    }
+    if (spaceObject is Missile){
+      this.missiles.remove(spaceObject)
+    }
+    if (spaceObject is Explosion){
+      this.explosions.remove(spaceObject) 
+    }
+  }
+
   fun removeExplosions() {
     this.explosions = emptyList()
   }
@@ -82,6 +94,12 @@ data class SpaceField(val width: Int, val height: Int, val generator: RandomGene
 
   fun trimAsteroids() {
     this.asteroids = this.asteroids.filter {
+      it.inBoundaries(this.boundaryX, this.boundaryY)
+    }
+  }
+
+  fun trimExplosions() {
+    this.explosions = this.explosions.filter {
       it.inBoundaries(this.boundaryX, this.boundaryY)
     }
   }
