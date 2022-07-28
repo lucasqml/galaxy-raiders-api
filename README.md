@@ -1,3 +1,8 @@
+Nome dos alunos: 
+Lucas Quaresma Medina Lam - NUSP: 11796399
+Roberto Oliveira Bolgheroni - NUSP:11796430
+
+
 # Galaxy Raiders
 
 Template for the project of the course [MAC0218 - Programming Techniques II][1]
